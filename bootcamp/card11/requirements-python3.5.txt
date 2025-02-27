@@ -307,7 +307,7 @@ vertica-python==0.10.3
 vine==1.3.0
 virtualenv==20.0.17
 wcwidth==0.1.9
-websocket-client==0.57.0
+websocket-client==0.54.0
 wrapt==1.12.1
 xmltodict==0.12.0
 yamllint==1.21.0
