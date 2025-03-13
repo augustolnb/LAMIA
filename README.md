@@ -1,6 +1,6 @@
 # Repositório de Estudos em Machine Learning, Deep Learning e Análise de Dados
 
-Bem-vindo(a) ao meu repositório de estudos! Aqui você encontrará todos os códigos, projetos e relatórios relacionados ao meu bootcamp para ingressar no grupo de pesquisa **LAMIA** (Laboratório de Aplicações em Matemática e Inteligência Artificial) da **UTFPR** (Universidade Tecnológica Federal do Paraná).
+Bem-vindo(a) ao meu repositório de estudos! Aqui você encontrará todos os códigos, projetos e relatórios relacionados ao meu bootcamp para ingressar no grupo de pesquisa **LAMIA** ( Laboratório de Aprendizado de Máquina e Imagens Aplicados à Indústria) da **UTFPR** (Universidade Tecnológica Federal do Paraná).
 
 ---
 
@@ -12,7 +12,7 @@ Me chamo **Lucas Augusto**, e sou Engenheiro Eletricista pelo IFTO - Campus Palm
 
 ## Sobre o LAMIA
 
-O **LAMIA** (Laboratório de Aplicações em Matemática e Inteligência Artificial) é um grupo de pesquisa da UTFPR que desenvolve soluções inovadoras utilizando técnicas matemáticas e de inteligência artificial. As principais áreas de atuação do LAMIA incluem:
+O **LAMIA** ( Laboratório de Aprendizado de Máquina e Imagens Aplicados à Indústria) é um grupo de pesquisa da UTFPR que desenvolve soluções inovadoras utilizando técnicas matemáticas e de inteligência artificial. As principais áreas de atuação do LAMIA incluem:
 
 - Processamento de imagens e sinais.
 - Aprendizado de máquina e deep learning.
