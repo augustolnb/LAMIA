@@ -19,4 +19,4 @@ O **LAMIA** ( Laboratório de Aprendizado de Máquina e Imagens Aplicados à Ind
 - Otimização e modelagem matemática.
 - Análise de dados e big data.
 
-Para saber mais sobre o LAMIA, visite o [site oficial do grupo: ]([https://www.lamia-edu.com/]) ou ainda o [Github: ]([https://github.com/lamiautfpr])
+Para saber mais sobre o LAMIA, visite o site oficial do grupo: [https://www.lamia-edu.com/] ou ainda o Github: [https://github.com/lamiautfpr]
