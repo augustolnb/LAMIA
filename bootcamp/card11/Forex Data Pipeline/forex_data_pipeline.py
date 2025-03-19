@@ -1,8 +1,9 @@
 from airflow import DAG
 from datetime import datetime, timedelta
-# importando sensores http
+# importando sensores 
 from airflow.sensors.http_sensor import HttpSensor
 from airflow.sensors.filesystem import FileSensor
+# importando operadores
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.operators.hive_operator import HiveOperator
@@ -43,39 +44,32 @@ def download_rates():
     with open('/usr/local/airflow/dags/files/forex_currencies.csv') as forex_currencies:
         reader = csv.DictReader(forex_currencies, delimiter=';')
         
-        # Itera sobre cada linha do CSV
         for row in reader:
             base = row['base']  # Moeda base
             with_pairs = row['with_pairs'].split(' ')  # Pares de moedas
 
-            # Faz a requisição à API
             url = f"https://api.exchangerate-api.com/v4/latest/{base}"
             response = requests.get(url)
             
-            # Verifica se a requisição foi bem-sucedida
             if response.status_code == 200:
-                indata = response.json()  # Converte a resposta para JSON
+                indata = response.json()  
 
-                # Verifica se a chave 'rates' está presente na resposta
                 if 'rates' in indata:
-                    # Cria o dicionário de saída
                     outdata = {
                         'base': base,
                         'rates': {},
-                        'last_update': indata.get('date', 'N/A')  # Usa 'N/A' se 'date' não existir
+                        'last_update': indata.get('date', 'N/A')  
                     }
 
-                    # Itera sobre os pares de moedas
                     for pair in with_pairs:
                         if pair in indata['rates']:
                             outdata['rates'][pair] = indata['rates'][pair]
                         else:
                             print(f"Par {pair} não encontrado nas taxas da API.")
 
-                    # Salva os dados no arquivo JSON
                     with open('/usr/local/airflow/dags/files/forex_rates.json', 'a') as outfile:
                         json.dump(outdata, outfile)
-                        outfile.write('\n')  # Adiciona uma nova linha para o próximo registro
+                        outfile.write('\n') 
                 else:
                     print(f"Resposta da API não contém 'rates' para a moeda base {base}.")
             else:
@@ -88,7 +82,7 @@ with DAG(dag_id="forex_data_pipeline", schedule_interval="@daily", default_args=
     is_forex_rates_available = HttpSensor(
         task_id="is_forex_rates_available",
         method="GET",
-        http_conn_id="forex_api", # Nome da conexão com o airflow
+        http_conn_id="forex_api", 
         endpoint="latest",
         response_check=lambda response: "rates" in response.text,
         poke_interval=5,
