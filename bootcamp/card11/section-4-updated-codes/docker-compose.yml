@@ -1,0 +1,24 @@
+services:
+######################################################
+# AIRFLOW
+######################################################
+
+  airflow:
+    build: ./docker/airflow
+    restart: always
+    container_name: airflow
+    volumes:
+      - ./mnt/airflow/project_a:/usr/local/airflow/project_a
+      - ./mnt/airflow/project_b:/usr/local/airflow/project_b
+      - ./mnt/airflow/dags:/usr/local/airflow/dags
+      - ./mnt/airflow/test_dags:/usr/local/airflow/test_dags
+      - ./mnt/airflow/airflow.cfg:/usr/local/airflow/airflow.cfg
+    ports:
+      - 8080:8080
+    environment:
+      - AIRFLOW__WEBSERVER__SECRET_KEY=c45653c1c20f3c536f84280c8bdbe9636f231507f1d978d30c86f50801b6
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "airflow", "8080" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
