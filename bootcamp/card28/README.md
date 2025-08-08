@@ -17,7 +17,7 @@ O sistema foi desenvolvido em Python, utilizando a biblioteca TensorFlow/Keras p
 -   **Classificação Binária:** Distingue as embalagens entre cheias e vazias.
 -   **Dataset Robusto:** Utiliza um dataset com mais de 4000 imagens capturadas manualmente em condições variadas.
 -   **Pré-processamento Automatizado:** Inclui scripts para processar as imagens originais e prepará-las para o treinamento.
--   
+ 
 ## 📊 O Dataset
 
 A base de dados do projeto é um dataset criado especificamente para este problema.
