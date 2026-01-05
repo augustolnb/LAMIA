@@ -1,0 +1,42 @@
+services:
+  n8n-server:
+    image: n8nio/n8n
+    ports:
+      - "5678:5678"
+    volumes:
+      - ./:/home/node/.n8n
+    environment:
+      GENERIC_TIMEZONE: America/Sao_Paulo
+    restart: unless-stopped
+    networks:
+      - n8n-network
+
+  waha-server:
+    image: devlikeapro/waha 
+    ports:
+      - "3000:3000" 
+    environment:
+      - WAHA_RESTART_ALL_SESSIONS=True 
+      - WAHA_AUTO_START_DELAY_SECONDS=5
+      # - WHATSAPP_SESSIONS_POSTGRESQL_URL=postgres://postgres:postgres@postgres:5432/postgres?sslmode=disable # Uncomment if using PostgreSQL
+      - WHATSAPP_DEFAULT_ENGINE=NOWEB
+      - WHATSAPP_HOOK_EVENTS=message
+
+      # ATUALIZAR A URL QUANDO TROCAR O TRIGGER WAHA NO N8N
+      - WHATSAPP_HOOK_URL=http://n8n-server:5678/webhook/a303167b-988c-4532-a79d-70997f97ac0f/waha
+                          #http://host.docker.internal:5678/webhook/a303167b-988c-4532-a79d-70997f97ac0f/waha
+    volumes:
+      - ./sessions:/app/.sessions 
+      - ./media:/app/.media 
+    
+    env_file:
+      - .env 
+    restart: unless-stopped
+    networks:
+      - n8n-network
+    
+
+    
+networks:
+  n8n-network:
+    driver: bridge
