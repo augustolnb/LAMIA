@@ -1,0 +1,95 @@
+# ===========================
+# 🔐 ARQUIVOS SENSÍVEIS (NUNCA SUBIR!)
+# ===========================
+*.env
+.env*
+*api_keys*
+*secrets*
+*credentials*
+*.pem
+*.key
+  
+# ===========================
+# 🐍 PYTHON
+# ===========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Ambientes Virtuais
+venv/
+.venv/
+ENV/
+env/
+.env.local
+  
+# ===========================
+# 📓 JUPYTER NOTEBOOKS
+# ===========================
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+  
+# ===========================
+# 💻 IDEs e Editores
+# ===========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.settings/
+  
+# ===========================
+# 🗂️ SISTEMA OPERACIONAL
+# ===========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===========================
+# 📦 DEPENDÊNCIAS E CACHE
+# ===========================
+node_modules/
+.cache/
+*.log
+*.tmp
+  
+# ===========================
+# 🗄️ BANCOS DE DADOS LOCAIS
+# ===========================
+*.db
+*.sqlite
+*.sqlite3
+chroma_db/
+qdrant_storage/
+  
+# ===========================
+# 📊 ARQUIVOS GRANDES (opcional)
+# ===========================
+*.zip
+*.tar.gz
+*.rar
+*.csv
+*.parquet
+*.h5
+__pycache__/
+*.pyc
