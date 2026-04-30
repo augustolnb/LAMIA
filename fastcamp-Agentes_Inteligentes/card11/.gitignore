@@ -1,0 +1,5 @@
+env_card11/
+venv_pratik/
+__pycache__/
+*.db
+.env

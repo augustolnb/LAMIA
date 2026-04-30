@@ -1,0 +1,4 @@
+{
+  "name": "flight_agent",
+  "description": "Recommends flight options based on destination, dates, and budget."
+}
