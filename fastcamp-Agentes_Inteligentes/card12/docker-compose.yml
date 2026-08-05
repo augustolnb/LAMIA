@@ -1,0 +1,25 @@
+services:
+  n8n:
+    image: n8nio/n8n:1.122.5
+    container_name: n8n
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5678:5678"
+    volumes:
+      - ./n8n_data:/home/node/.n8n
+    environment:
+      - GENERIC_TIMEZONE=America/Sao_Paulo
+
+  waha:
+    image: devlikeapro/waha:latest-2026.7.2
+    container_name: waha
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - ./waha_data:/app/.sessions
+    environment:
+      - WHATSAPP_DEFAULT_ENGINE=NOWEB
+      - WAHA_DASHBOARD_USERNAME=admin
+      - WAHA_DASHBOARD_PASSWORD=changeme
+      - WAHA_API_KEY=changeme-api-key
