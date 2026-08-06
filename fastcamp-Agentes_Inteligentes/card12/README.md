@@ -28,19 +28,19 @@ Os dois serviços conversam entre si pelo nome do serviço no Docker (`waha`, `n
 
 ## Setup (resumo)
 
-1. Suba os containers (acima).
-2. Crie sua conta no n8n.
+1. Suba os containers.
+2. Crie uma conta no n8n.
 3. Instale o nó comunitário `@devlikeapro/n8n-nodes-waha` (Settings → Community Nodes).
 4. Pareie o WhatsApp escaneando o QR Code no dashboard da WAHA (`http://localhost:3000`).
 5. Monte o workflow: `WAHA Trigger → Edit Fields → Send Seen + Send Text`.
 6. Ative o workflow e aponte o webhook da sessão WAHA para a URL de produção do n8n.
 
-Passo a passo completo, com todos os problemas encontrados e como foram resolvidos, está no [`Relatório 12 - Lucas Augusto.pdf`](Relatório%2012%20-%20Lucas%20Augusto.pdf).
+Passo a passo completo em [`Relatório 12 - Lucas Augusto.pdf`](Relatório%2012%20-%20Lucas%20Augusto.pdf).
 
 ## Principais problemas encontrados
 
 - **Crash loop no n8n (EACCES):** o Docker criava a pasta de dados como `root`, mas o container roda como usuário `node`. Corrigido criando as pastas manualmente antes do `docker compose up`.
-- **Engine WEBJS instável:** a engine padrão da WAHA (automação de navegador) quebrava ao listar conversas e ao enviar mensagens — bugs conhecidos e sem correção estável na época. Resolvido trocando para a engine **NOWEB**, que fala o protocolo do WhatsApp diretamente.
+- **Engine WEBJS instável:** a engine padrão da WAHA (automação de navegador) quebrava ao listar conversas e ao enviar mensagens — bugs conhecidos e sem correção estável no momento da implementação. Resolvido trocando para a engine **NOWEB**, que fala o protocolo do WhatsApp diretamente.
 - **Mensagens "enviadas" que não chegavam:** a causa raiz era um campo mal configurado no node de envio (`chatId` apontando para o ID da mensagem em vez do contato de destino). Depois de corrigido, a entrega passou a ser rápida e consistente.
 
 ## Status
