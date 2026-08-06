@@ -1,0 +1,155 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "@devlikeapro/n8n-nodes-waha.wahaTrigger",
+      "typeVersion": 202502,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8dadb129-16ef-4147-8042-b02b85ea0440",
+      "name": "WAHA Trigger",
+      "webhookId": "cf274978-6452-4f32-bad1-88a7a07aea67"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "764bad50-3b0f-4dbc-be7e-f10539c1d935",
+              "name": "session",
+              "value": "={{ $json.session }}",
+              "type": "string"
+            },
+            {
+              "id": "0340dd8d-9b04-4da0-b272-7030ba46d011",
+              "name": "quem_mandou",
+              "value": "={{ $json.payload.from }}",
+              "type": "string"
+            },
+            {
+              "id": "b4572fbf-3bae-49a6-8616-a295cc231c24",
+              "name": "mensagem",
+              "value": "={{ $json.payload.body }}",
+              "type": "string"
+            },
+            {
+              "id": "2c25e0d8-2ace-48c2-8ec9-6e7c395a1fd1",
+              "name": "id_mensagem",
+              "value": "={{ $json.payload.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        32
+      ],
+      "id": "ffc81323-7d43-4219-9738-167bbc925feb",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Seen",
+        "chatId": "={{ $json.quem_mandou }}",
+        "messageId": "={{ $json.id_mensagem }}",
+        "participant": "",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        624,
+        32
+      ],
+      "id": "c8226f45-b811-40ae-a6e0-97e76b9b94b5",
+      "name": "Send Seen",
+      "credentials": {
+        "wahaApi": {
+          "id": "x5lJxmLd81jlX6c5",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "={{ $('Edit Fields').item.json.session }}",
+        "chatId": "={{ $('Edit Fields').item.json.quem_mandou }}",
+        "text": "=\"teste\"",
+        "linkPreview": false,
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        832,
+        32
+      ],
+      "id": "86c7e687-327d-4be0-aa3c-0f3ae8eda123",
+      "name": "Send a text message",
+      "credentials": {
+        "wahaApi": {
+          "id": "x5lJxmLd81jlX6c5",
+          "name": "WAHA account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "WAHA Trigger": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send Seen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Seen": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "557f4ec1-30fa-4c46-837e-2679c2aec375",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cde715e6d197ed4ebf8ebcb4e59fa5c11c7219c60852349e09bb8fba92f2514e"
+  },
+  "id": "UcLMw0D7TThvZ5tI",
+  "tags": []
+}
