@@ -4,9 +4,6 @@ Extensão do agente WhatsApp do card12: em vez de só ecoar mensagens, esse work
 um pedido de aula em linguagem natural, gera o conteúdo com o Claude (Anthropic), compila
 em LaTeX/PDF localmente e responde com o PDF pronto, tudo pelo WhatsApp.
 
-Stack própria e independente da raiz do projeto — ver
-[`PLANO_PRATICA.md`](PLANO_PRATICA.md) para o plano de implementação completo, incluindo
-as suposições e decisões tomadas antes de implementar.
 
 ## Como funciona
 
@@ -63,8 +60,6 @@ comportamento da LLM sem precisar tocar no workflow.
 Todos encontrados rodando o workflow de ponta a ponta via API do n8n (não só teoricamente
 montado)
 
-- **Resposta do Claude cortada no meio** — o limite padrão de tokens do node (1024) era
-  baixo demais para um documento de aula completo. Aumentado para 8192.
 - **Claude embrulhando o LaTeX em blocos de código Markdown** (` ```latex ... ``` `),
   mesmo com instrução explícita para não fazer isso — o node de compilação agora remove
   esses blocos antes de mandar o conteúdo pro compilador, em vez de confiar cegamente na
@@ -76,5 +71,4 @@ montado)
 ## Status
 
 Testado de ponta a ponta via execução direta pela API do n8n (webhook simulado): o fluxo
-completo gera e entrega um PDF real. Falta validação com uma mensagem real enviada de
-outro número de WhatsApp (mesma mecânica do card12 original).
+completo gera e entrega um PDF real.
