@@ -61,7 +61,7 @@ comportamento da LLM sem precisar tocar no workflow.
 ## Bugs encontrados e corrigidos durante os testes
 
 Todos encontrados rodando o workflow de ponta a ponta via API do n8n (não só teoricamente
-montado) — ver [`Relatorio-pratica.pdf`](../Relatorio-pratica.pdf) para os detalhes:
+montado)
 
 - **Resposta do Claude cortada no meio** — o limite padrão de tokens do node (1024) era
   baixo demais para um documento de aula completo. Aumentado para 8192.
