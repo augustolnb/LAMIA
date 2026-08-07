@@ -1,0 +1,373 @@
+{
+  "name": "Gerador de Aulas",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "@devlikeapro/n8n-nodes-waha.wahaTrigger",
+      "typeVersion": 202502,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c674621f-dfc2-4968-8101-52319fef17eb",
+      "name": "WAHA Trigger",
+      "webhookId": "78336cb3-e7b3-477f-bfa8-17638d0e328c"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.payload.body }}",
+              "rightValue": "/aula",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        0
+      ],
+      "id": "da7543f9-1a5b-4bdc-84ee-ade62dffa6fb",
+      "name": "Filtrar comando /aula"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/data/templates/diretrizes-formatacao.md",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "4affe698-a4b5-4e46-844e-711497dd3a59",
+      "name": "Ler diretrizes"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "destinationKey": "diretrizes",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        640,
+        0
+      ],
+      "id": "3a75a5b3-3be9-4dee-8e0a-0120209711ef",
+      "name": "Extrair texto das diretrizes"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "mode": "id",
+          "value": "claude-sonnet-4-5-20250929"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $('WAHA Trigger').item.json.payload.body.replace('/aula', '').trim() }}"
+            }
+          ]
+        },
+        "options": {
+          "system": "={{ $json.diretrizes }}\n\nResponda exclusivamente com o código-fonte LaTeX completo e compilável, sem explicações antes ou depois, sem blocos de código Markdown, começando em \\documentclass e terminando em \\end{document}.",
+          "maxTokens": 8192
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.anthropic",
+      "typeVersion": 1,
+      "position": [
+        816,
+        0
+      ],
+      "id": "7ef95498-ae20-4021-9838-26f421e0bc2c",
+      "name": "Gerar LaTeX com Claude",
+      "credentials": {
+        "anthropicApi": {
+          "id": "BOXuwq3UEKVTywjc",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://latex-compiler:8000/compile",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ tex: $json.content[0].text.replace(/^```(latex)?\\s*\\n?/, '').replace(/\\n?```\\s*$/, '') }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "file",
+              "outputPropertyName": "pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "09228376-0ca3-43ca-95f9-ad48c64db0c6",
+      "name": "Compilar LaTeX em PDF"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1328,
+        0
+      ],
+      "id": "79260a95-5512-4795-9748-3f1667ef7491",
+      "name": "Compilação OK?"
+    },
+    {
+      "parameters": {
+        "setAllData": false,
+        "sourceKey": "pdf",
+        "destinationKey": "pdfBase64",
+        "options": {
+          "keepAsBase64": true
+        }
+      },
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1,
+      "position": [
+        1536,
+        -80
+      ],
+      "id": "4f824cec-aec3-42a8-9a00-6f3039acdbaf",
+      "name": "PDF para base64"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send File",
+        "session": "={{ $('WAHA Trigger').item.json.session }}",
+        "chatId": "={{ $('WAHA Trigger').item.json.payload.from }}",
+        "file": "={{ JSON.stringify({ mimetype: 'application/pdf', filename: 'aula.pdf', data: $json.pdfBase64 }) }}",
+        "caption": "Aqui está a sua aula em PDF!",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        1712,
+        -80
+      ],
+      "id": "3b663292-12a1-4508-92b9-35779a742cdc",
+      "name": "Enviar PDF",
+      "credentials": {
+        "wahaApi": {
+          "id": "6jddMcgAWdSYbipR",
+          "name": "WAHA account (pratica)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "={{ $('WAHA Trigger').item.json.session }}",
+        "chatId": "={{ $('WAHA Trigger').item.json.payload.from }}",
+        "text": "Desculpe, não consegui gerar o PDF da aula agora. Tente reformular o pedido (ex: \"/aula Física - Lei de Ohm - Ensino Médio\") ou tente novamente em instantes.",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        1632,
+        112
+      ],
+      "id": "937f6beb-2a13-431e-83dd-181dfb885ee8",
+      "name": "Enviar erro",
+      "credentials": {
+        "wahaApi": {
+          "id": "6jddMcgAWdSYbipR",
+          "name": "WAHA account (pratica)"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "WAHA Trigger": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Filtrar comando /aula",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    },
+    "Filtrar comando /aula": {
+      "main": [
+        [
+          {
+            "node": "Ler diretrizes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ler diretrizes": {
+      "main": [
+        [
+          {
+            "node": "Extrair texto das diretrizes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extrair texto das diretrizes": {
+      "main": [
+        [
+          {
+            "node": "Gerar LaTeX com Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar LaTeX com Claude": {
+      "main": [
+        [
+          {
+            "node": "Compilar LaTeX em PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compilar LaTeX em PDF": {
+      "main": [
+        [
+          {
+            "node": "Compilação OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compilação OK?": {
+      "main": [
+        [
+          {
+            "node": "PDF para base64",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar erro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDF para base64": {
+      "main": [
+        [
+          {
+            "node": "Enviar PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "619d0d1f-b417-4ad3-928c-de43909a407c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "989185c4e25ab4466a273c8529093e5c5b51d9fbe55c92d410b9a3f10ecc9ac6"
+  },
+  "id": "aEpchq1CkDQewBYC",
+  "tags": []
+}
