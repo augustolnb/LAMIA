@@ -1,0 +1,6 @@
+google-adk>=2.7.1
+litellm>=1.97.0
+pandas>=2.0
+python-dotenv>=1.0
+pytest>=8.0
+jupyter>=1.0
