@@ -1,8 +1,4 @@
-"""Orquestração de um caso clínico via extractor_agent + report_agent (ADK), em async.
-
-A checagem de segurança é determinística (src/interactions.py, sem LLM) e roda em Python
-entre os dois agentes — ver run_case_async() e _format_report_request().
-"""
+"""Orquestração de um caso clínico via extractor_agent + report_agent (ADK), em async."""
 
 from __future__ import annotations
 
