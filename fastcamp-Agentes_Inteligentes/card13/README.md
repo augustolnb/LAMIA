@@ -1,6 +1,6 @@
 # ag-clinico-adk
 
-Pipeline de agentes clínicos (Extractor Agent + Report Agent, chamados diretamente pelo Python — sem orquestrador LLM) construído sobre o Google ADK, usando DeepSeek como LLM, com checagem de interação medicamentosa determinística (sem LLM). Processa casos do dataset mtsamples e produz extração estruturada, alertas de interação medicamentosa e um RELATÓRIO clínico conciso em português — como apoio à decisão clínica, nunca como diagnóstico definitivo.
+Pipeline de agentes clínicos (Extractor Agent + Report Agent) construído sobre o Google ADK, usando DeepSeek como modelo de linguagem, com checagem de interação medicamentosa determinística (via Python). Processa casos do dataset _mtsamples_ e faz uma extração estruturada, gerando alertas de interação medicamentosa e um relatório clínico para servir como apoio à decisão clínica, nunca como diagnóstico definitivo.
 
 ## Setup
 
@@ -14,11 +14,6 @@ cp .env.example .env  # preencha DEEPSEEK_API_KEY
 Salve o CSV mtsamples em `data/mtsamples.csv` (colunas `description`, `transcription`,
 `medical_specialty`).
 
-## Rodar os testes
-
-```bash
-pytest
-```
 
 ## Rodar a demo
 
@@ -26,12 +21,11 @@ pytest
 python run_demo.py
 ```
 
-Ou abra `demo.ipynb` em Jupyter.
+Ou para testar via _notebook_ abra `demo.ipynb` usando Jupyter ou Google Colab.
 
 ## Aviso
 
-Este sistema é apoio à decisão clínica. Não substitui avaliação médica presencial nem
-constitui diagnóstico definitivo.
+Este sistema é apoio à decisão clínica. Não substitui avaliação médica presencial nem constitui diagnóstico definitivo.
 
 ## Arquitetura
 
@@ -62,45 +56,18 @@ relatório nunca divirjam — ver `pipeline.py::_format_report_request`.
 
 ### Checagem de segurança determinística
 
-O cruzamento das `N*(N-1)/2` combinações de fármacos é feito em Python
-(`src/interactions.py`), **não** pelo LLM. Isso existe porque delegar o pareamento ao modelo
-truncava a cobertura em listas longas (14–17 fármacos retornavam 0 alertas). Antes de parear,
-a lista passa por `deduplicate_drugs()`: menções repetidas da MESMA substância — variação de
-dose/via ("heparin" x "Heparin IV") ou sinônimo marca/genérico exato ("Xanax" x "alprazolam")
-— contam como um único fármaco, não dois, evitando alerta artificial de duplicação entre
-grafias da mesma prescrição.
+O cruzamento das `N*(N-1)/2` combinações de fármacos é feito em Python (`src/interactions.py`), **não** pelo LLM. Isso existe porque delegar o pareamento ao modelo truncava a cobertura em listas longas (foram encontrados inconsistências nesses casos). Antes de parear, a lista passa por `deduplicate_drugs()`, que retira da lista menções repetidas de uma mesma substância, checando variações de dose/via ("heparin" x "Heparin IV") ou ainda, sinônimos marca/genérico como o caso _"Xanax" x "alprazolam"_ , esse tratamento evita alertas artificiais de duplicação entre diferentes referências da mesma prescrição.
 
-O resultado (`safety_report`) é passado diretamente, como JSON verbatim, na mensagem enviada
-ao `report_agent` — nenhum LLM intermediário o reescreve ou resume antes disso.
+O resultado (`safety_report`) é passado diretamente, no formato JSON, na mensagem enviada ao `report_agent` , sem alteração por intermédio de LLM.
 
-A base cobre quatro mecanismos, com normalização de marca comercial e nome em português
-(Lasix → furosemide, AAS → aspirin) e expansão de compostos combinados
-(Tarka → trandolapril + verapamil):
+A base cobre quatro mecanismos, com normalização de marca comercial e nome em português (Lasix → furosemide, AAS → aspirin) e expansão de compostos combinados (Tarka → trandolapril + verapamil):
 
-1. **Duplicação terapêutica** — mesmo princípio ativo sob nomes diferentes ou dentro de um
-   composto combinado, e repetição de classe.
+1. **Duplicação terapêutica** — mesmo princípio ativo sob nomes diferentes ou dentro de um composto combinado, e repetição de classe.
 2. **Farmacocinética (CYP450)** — inibidores potentes de CYP2D6/CYP3A4 sobre seus substratos.
-3. **Efeitos somatórios/sinérgicos** — risco hemorrágico, depressão do SNC e respiratória,
-   toxicidade dromotrópica, distúrbios eletrolíticos.
-4. **Antagonismo farmacodinâmico** — colinérgico vs. anticolinérgico, beta-agonista vs.
-   betabloqueador.
+3. **Efeitos somatórios/sinérgicos** — risco hemorrágico, depressão do SNC e respiratória, toxicidade dromotrópica, distúrbios eletrolíticos.
+4. **Antagonismo farmacodinâmico** — colinérgico vs. anticolinérgico, beta-agonista vs. betabloqueador.
 
 A cobertura é limitada ao que está codificado na base: determinística e auditável por
 decisão de projeto, já que uma alucinação do modelo teria custo assistencial real.
-
-Ver `docs/superpowers/specs/2026-08-17-clinical-agents-adk-design.md` para o design completo.
-
-## Estrutura
-
-```
-src/
-  data_prep.py     # filtragem de amostra do mtsamples
-  interactions.py  # base curada + motor determinístico de interações
-  tools.py         # check_all_drug_interactions / check_drug_interaction (tools do ADK)
-  agents.py        # Extractor, Report (ADK, usados ao vivo); Safety/Router (ADK, não usados
-                   #   ao vivo — ver seção Arquitetura)
-  pipeline.py      # run_case_async() / run_case() — usados por run_demo.py e demo.ipynb
-tests/             # testes de lógica pura (sem rede/LLM), incl. casos-ouro revisados
-run_demo.py      # CLI de demonstração
 demo.ipynb       # notebook de demonstração
 ```
