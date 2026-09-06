@@ -1,10 +1,6 @@
 # ag-clinico-adk
 
-Pipeline de agentes clínicos (Extractor, Safety, Report, orquestrados por um Router
-hierárquico) construído sobre o Google ADK, usando DeepSeek como LLM. Processa casos do
-dataset mtsamples e produz extração estruturada, alertas de interação medicamentosa e um
-RELATÓRIO clínico conciso em português — como apoio à decisão clínica, nunca como
-diagnóstico definitivo.
+Pipeline de agentes clínicos (Extractor Agent + Report Agent, chamados diretamente pelo Python — sem orquestrador LLM) construído sobre o Google ADK, usando DeepSeek como LLM, com checagem de interação medicamentosa determinística (sem LLM). Processa casos do dataset mtsamples e produz extração estruturada, alertas de interação medicamentosa e um RELATÓRIO clínico conciso em português — como apoio à decisão clínica, nunca como diagnóstico definitivo.
 
 ## Setup
 
