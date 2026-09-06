@@ -1,7 +1,7 @@
 """Tools de interação medicamentosa expostas ao safety_agent.
 
-O conhecimento farmacológico vive em src/interactions.py; aqui ficam apenas as
-assinaturas que o ADK converte em function declarations para o LLM.
+O conhecimento farmacológico vive em src/interactions.py.
+Nesse doc ficam as assinaturas que o ADK converte em function declarations para o LLM.
 """
 
 from __future__ import annotations
