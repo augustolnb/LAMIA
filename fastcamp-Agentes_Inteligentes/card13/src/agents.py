@@ -1,4 +1,9 @@
-"""Definição dos agentes ADK: Extractor, Safety, Summary e Router hierárquico."""
+"""Definição dos agentes ADK: Extractor, Safety, Summary e Router hierárquico.
+
+PS: build_router_agent() e build_safety_agent() continuam em agents.py só porque são testados e ficam disponíveis para uso independente/exploratório,
+mas não são importados em nenhum lugar de pipeline.py. 
+A "arquitetura final" é literalmente agents.py (definição) + pipeline.py (orquestração em Python, substituindo o router).
+"""
 
 from __future__ import annotations
 
