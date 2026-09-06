@@ -1,15 +1,14 @@
 """Motor determinístico de interações medicamentosas.
 
-Substitui a tabela mock de 5 pares por uma base curada com quatro camadas de
-avaliação, todas resolvidas em Python (nunca pelo LLM):
+Base curada com quatro camadas de avaliação, todas resolvidas em Python (nunca pelo LLM):
 
-1. Duplicação terapêutica — mesmo genérico sob nomes diferentes e componentes
+1. Duplicação terapêutica: mesmo genérico sob nomes diferentes e componentes
    sobrepostos de compostos combinados (ex.: Tarka = trandolapril + verapamil).
-2. Farmacocinética via citocromo P450 — inibidores potentes de CYP2D6/CYP3A4
+2. Farmacocinética via citocromo P450: inibidores potentes de CYP2D6/CYP3A4
    sobre substratos dessas mesmas isoenzimas.
-3. Efeitos somatórios/sinérgicos — risco hemorrágico, depressão do SNC e
+3. Efeitos somatórios/sinérgicos: risco hemorrágico, depressão do SNC e
    respiratória, toxicidade dromotrópica, distúrbios eletrolíticos.
-4. Antagonismo farmacodinâmico direto — colinérgico vs. anticolinérgico,
+4. Antagonismo farmacodinâmico direto: colinérgico vs. anticolinérgico,
    beta-agonista vs. betabloqueador.
 
 A cobertura é limitada ao que está codificado aqui: a base é auditável e
